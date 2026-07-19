@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Auto Suggest</title>
+
+    <style>
+        .gear{
+            margin-left:10px;
+        }
+
+        .clock{
+            margin-left:90%;
+        }
+
+        .maintag{
+            background-color:white;
+            text-align:center;
+            margin-top:60px;
+            font-size:80px;
+        }
+
+        .textphrase{
+            text-align:center;
+            font-size:20px;
+            color:rgb(188,183,177);
+        }
+
+        .bein{
+            color:blueviolet;
+        }
+
+        .search-container{
+            width:40%;
+            margin:20px auto;
+            background:white;
+            border:1px solid #ccc;
+            border-radius:10px;
+            padding:10px;
+            display:flex;
+            align-items:center;
+            box-sizing:border-box;
+        }
+
+        .search-input{
+            flex:1;
+            border:none;
+            outline:none;
+            font-size:18px;
+            margin-left:10px;
+        }
+
+        .search-suggestions {
+    width: 50%;
+    margin: 0 auto;
+    background: white;
+    border-radius: 0 0 10px 10px;
+    box-sizing: border-box;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+}
+
+        .suggestion{
+            padding:12px;
+            border-bottom:1px solid #eee;
+            cursor:pointer;
+        }
+
+        .suggestion:hover{
+            background:#f5f5f5;
+        }
+    </style>
+
+</head>
+<body>
+
+    <span class="gear">&#x2699;</span>
+
+    <span class="clock">&#x2022; online | &#x1F552; -ms</span>
+
+    <h1 class="maintag">
+        <span class="bein">Being</span>
+        Infinity
+    </h1>
+
+    <p class="textphrase">
+        One Million Phrases. Four Algorithms. Prefix Based Auto Suggest
+    </p>
+
+    <!-- Search Bar -->
+    <div class="search-container">
+
+        <span>🔍</span>
+
+        <input
+            id="search-box"
+            class="search-input"
+            type="text"
+            placeholder="Start typing to search phrases..."
+            oninput="getsearchsuggestions()">
+
+    </div>
+
+    <!-- Suggestions -->
+    <div id="search-suggestions" class="search-suggestions"></div>
+
+    <script>
+
+        function getsearchsuggestions(){
+
+            var searchbox=document.getElementById("search-box");
+            var searchsuggestions=document.getElementById("search-suggestions");
+
+            var userInput=searchbox.value;
+
+            if(userInput.trim()==""){
+                searchsuggestions.innerHTML="";
+                return;
+            }
+
+            var URL="https://autosuggest-backend.onrender.com/api/autosuggest?q="
+                    +userInput+
+                    "&algorithm=brute&limit=10&weighted=false";
+
+            fetch(URL)
+            .then(function(response){
+                return response.json();
+            })
+            .then(function(data){
+
+                var searchresults="";
+
+                for(var i=0;i<data.count;i++){
+
+                    searchresults +=
+                    "<div class='suggestion'>"
+                    +data.results[i].text+
+                    "</div>";
+
+                }
+
+                searchsuggestions.innerHTML=searchresults;
+
+            })
+            .catch(function(err){
+                console.log(err);
+            });
+
+        }
+
+    </script>
+
+</body>
+</html>
